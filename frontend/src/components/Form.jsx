@@ -8,6 +8,7 @@ const Form = () => {
         phone: '',
         vehicleModel: '',
     });
+    const [loading, setLoading] = useState(false); // State for loader
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -16,12 +17,15 @@ const Form = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true); // Show loader when submitting
         try {
-            const response = await axios.post('https://custdet.onrender.com/api/records', formData);
-            alert(response.data.message);
+            await axios.post('https://custdet.onrender.com/api/records', formData);
+            // alert(response.data.message);
             setFormData({ name: '', phone: '', vehicleModel: '' });
         } catch (error) {
             alert('Failed to save record.');
+        } finally {
+            setLoading(false); // Hide loader after process completion
         }
     };
 
@@ -57,7 +61,10 @@ const Form = () => {
                     required
                 />
             </div>
-            <button type="submit">Save</button>
+            <button type="submit" disabled={loading}>
+                {loading ? 'Saving...' : 'Save'}
+            </button>
+            {loading && <p>Loading...</p>} {/* Optional loader message */}
         </form>
     );
 };
